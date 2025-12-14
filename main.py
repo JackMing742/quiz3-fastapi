@@ -18,7 +18,7 @@ def get_books(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=100)):
         return books
     except Exception as e:
         print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="內部伺服器 Error")
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
 
 # 取得特定書籍的詳細資訊
 @app.get("/books/{book_id}", response_model=BookResponse, status_code=200)
@@ -33,11 +33,11 @@ def get_book(book_id: int):
     except HTTPException:# 捕捉並重新引發 HTTPException，以便正確處理 404 錯誤不會被下方的 Exception 捕捉到。
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail="內部伺服器 Error")
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
 
 # 新增一本書籍
 @app.post("/books", response_model=BookResponse, status_code=201)
-def add_book(book: BookCreate = Body(...)):# 使用 Body(...) 來表示 book 參數是從請求的主體中獲取的，並且是必需的。
+def add_book(book: BookCreate):# 使用 Body(...) 來表示 book 參數是從請求的主體中獲取的，並且是必需的。
     try:
         #新增書籍到資料庫
         book_id = database.create_book(
@@ -58,10 +58,10 @@ def add_book(book: BookCreate = Body(...)):# 使用 Body(...) 來表示 book 參
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail="內部伺服器 Error")
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
 # 更新特定書籍的資訊
 @app.put("/books/{book_id}", response_model=BookResponse, status_code=200)
-def update_book(book_id: int, book: BookCreate = Body(...)):# 使用 Body(...) 來表示 book 參數是從請求的主體中獲取的，並且是必需的。
+def update_book(book_id: int, book: BookCreate):# 使用 Body(...) 來表示 book 參數是從請求的主體中獲取的，並且是必需的。
     try:
         updated = database.update_book(
             book_id=book_id,
@@ -82,7 +82,7 @@ def update_book(book_id: int, book: BookCreate = Body(...)):# 使用 Body(...) �
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail="內部伺服器 Error")
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
 # 刪除特定書籍
 @app.delete("/books/{book_id}", status_code=204)
 def delete_book(book_id: int):
@@ -95,4 +95,4 @@ def delete_book(book_id: int):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail="內部伺服器 Error")
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
